@@ -10,5 +10,5 @@
 
 ## Changelog
 
-### Version 0.1.0 / year-month-day
+### Version 0.2.0 / year-month-day
 * Initial commit

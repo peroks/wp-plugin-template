@@ -1,4 +1,5 @@
 <?php namespace peroks\plugin_customer\plugin_package;
+
 use PclZip;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -9,14 +10,13 @@ use ZipArchive;
  *
  * @author Per Egil Roksvaag
  */
-class Download
-{
+class Download {
 	use Singleton;
 
 	/**
 	 * @var string Admin settings
 	 */
-	const SECTION_DOWNLOAD        = Main::PREFIX . '_download';
+	const SECTION_DOWNLOAD        = Plugin::PREFIX . '_download';
 	const OPTION_DOWNLOAD_THEMES  = self::SECTION_DOWNLOAD . '_themes';
 	const OPTION_DOWNLOAD_PLUGINS = self::SECTION_DOWNLOAD . '_plugins';
 
@@ -30,20 +30,20 @@ class Download
 
 			//	Enables theme downloads.
 			if ( get_option( self::OPTION_DOWNLOAD_THEMES ) ) {
-				add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-				add_action( 'admin_init', array( $this, 'download_theme' ) );
+				add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+				add_action( 'admin_init', [ $this, 'download_theme' ] );
 			}
 
 			//	Enables plugin downloads
 			if ( get_option( self::OPTION_DOWNLOAD_PLUGINS ) ) {
-				add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
-				add_action( 'admin_init', array( $this, 'download_plugin' ) );
+				add_filter( 'plugin_action_links', [ $this, 'plugin_action_links' ], 10, 2 );
+				add_action( 'admin_init', [ $this, 'download_plugin' ] );
 			}
 
 			//	Admin settings
-			add_action( 'admin_init', array( $this, 'add_settings' ) );
-			add_action( Main::ACTION_ACTIVATE, array( $this, 'activate' ) );
-			add_action( Main::ACTION_DELETE, array( $this, 'delete' ), 100 );
+			add_action( 'admin_init', [ $this, 'add_settings' ] );
+			add_action( Plugin::ACTION_ACTIVATE, [ $this, 'activate' ] );
+			add_action( Plugin::ACTION_DELETE, [ $this, 'delete' ], 100 );
 		}
 	}
 
@@ -58,8 +58,8 @@ class Download
 	 */
 	public function admin_enqueue_scripts( $page ) {
 		if ( 'themes.php' == $page ) {
-			$deps = array( 'jquery' );
-			$args = array( 'defer' => true );
+			$deps = [ 'jquery' ];
+			$args = [ 'defer' => true ];
 			Asset::instance()->enqueue_script( 'assets/js/tools/download.min.js', $deps, $args );
 		}
 	}
@@ -69,14 +69,15 @@ class Download
 	 *
 	 * @param array $actions An array of plugin action links.
 	 * @param string $plugin_file Path to the plugin file relative to the plugins directory.
+	 *
 	 * @return array The modified action links.
 	 */
 	public function plugin_action_links( $actions, $plugin_file ) {
 		if ( $parts = explode( '/', $plugin_file ) ) {
-			array_push( $actions, vsprintf( '<a href="%s" download>%s</a>', array(
+			array_push( $actions, vsprintf( '<a href="%s" download>%s</a>', [
 				esc_url( admin_url( sprintf( 'plugins.php?download-plugin=%s', $parts[0] ) ) ),
 				esc_html__( 'Download', '[plugin-text-domain]' ),
-			) ) );
+			] ) );
 		}
 		return $actions;
 	}
@@ -121,6 +122,7 @@ class Download
 	 * Gets the full path to a theme dirctory.
 	 *
 	 * @param string $theme The theme name
+	 *
 	 * @return string The full path to a theme dirctory
 	 */
 	protected function get_theme_dir( $theme ) {
@@ -142,6 +144,7 @@ class Download
 	 * Gets the full path to a temp zip file.
 	 *
 	 * @param string $name The theme of plugin name
+	 *
 	 * @return string The full path to a temp zip file
 	 */
 	protected function get_zip_path( $name ) {
@@ -168,7 +171,7 @@ class Download
 			}
 		}
 
-		return $files ?? array();
+		return $files ?? [];
 	}
 
 	protected function create_zip( $zip_path, $dir ) {
@@ -183,6 +186,7 @@ class Download
 	 *
 	 * @param string $zip_path Full path to a temp zip file
 	 * @param string $dir Full path to a theme or plugin directory
+	 *
 	 * @return bool True if a temporary zip file was sucessfully created, false otherwise.
 	 */
 	protected function create_php_zip( $zip_path, $dir ) {
@@ -247,32 +251,32 @@ class Download
 	public function add_settings() {
 
 		// Download section
-		Admin::instance()->add_section( array(
+		Admin::instance()->add_section( [
 			'section'     => self::SECTION_DOWNLOAD,
 			'page'        => Admin::PAGE,
 			'label'       => __( 'Theme and plugin downloads', '[plugin-text-domain]' ),
-			'description' => vsprintf( '<p>%s</p>', array(
+			'description' => vsprintf( '<p>%s</p>', [
 				esc_html__( 'Check the below checkboxes to allow downloads of themes and/or plugins.', '[plugin-text-domain]' ),
-			) ),
-		) );
+			] ),
+		] );
 
 		//	Download themes
-		Admin::instance()->add_checkbox( array(
+		Admin::instance()->add_checkbox( [
 			'option'      => self::OPTION_DOWNLOAD_THEMES,
 			'section'     => self::SECTION_DOWNLOAD,
 			'page'        => Admin::PAGE,
 			'label'       => __( 'Enable theme downloads', '[plugin-text-domain]' ),
 			'description' => __( 'Check to enable download of themes from the dashboard.', '[plugin-text-domain]' ),
-		) );
+		] );
 
 		//	Download plugins
-		Admin::instance()->add_checkbox( array(
+		Admin::instance()->add_checkbox( [
 			'option'      => self::OPTION_DOWNLOAD_PLUGINS,
 			'section'     => self::SECTION_DOWNLOAD,
 			'page'        => Admin::PAGE,
 			'label'       => __( 'Enable plugin downloads', '[plugin-text-domain]' ),
 			'description' => __( 'Check to enable download of plugins from the dashboard.', '[plugin-text-domain]' ),
-		) );
+		] );
 	}
 
 	/**

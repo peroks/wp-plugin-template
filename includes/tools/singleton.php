@@ -4,28 +4,26 @@
  *
  * @author Per Egil Roksvaag
  */
-trait Singleton
-{
+trait Singleton {
 	/**
-	 * @var object The class singleton.
+	 * @var static[] The class singletons.
 	 */
-	protected static $_instance;
+	private static array $inst;
 
 	/**
-	 * @return object The class singleton.
+	 * @return static The class singleton.
 	 */
-	public static function instance() {
-		if ( is_null( static::$_instance ) ) {
-			static::$_instance = false;
-			$class             = apply_filters( Main::FILTER_CLASS_CREATE, static::class );
-			static::$_instance = apply_filters( Main::FILTER_CLASS_CREATED, new $class(), $class, static::class );
+	public static function instance(): object {
+		$class = apply_filters( Plugin::FILTER_CLASS_CREATE, static::class );
+
+		if ( empty( self::$inst[ $class ] ) ) {
+			self::$inst[ $class ] = apply_filters( Plugin::FILTER_CLASS_CREATED, new $class(), $class, static::class );
 		}
-		return static::$_instance;
+		return self::$inst[ $class ];
 	}
 
 	/**
 	 * Protect constructor.
 	 */
-	protected function __construct() {
-	}
+	protected function __construct() {}
 }

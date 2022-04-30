@@ -6,15 +6,14 @@
  * @author Per Egil Roksvaag
  * @method static Utils instance() Gets the singleton class instance
  */
-class Utils
-{
+class Utils {
 	use Singleton;
 
 	/**
 	 * @var string The class filter hooks.
 	 */
-	const FILTER_PARSE_CLASS = Main::PREFIX . '_parse_class';
-	const FILTER_GET_WIDGET  = Main::PREFIX . '_get_widget';
+	const FILTER_PARSE_CLASS = Plugin::PREFIX . '_parse_class';
+	const FILTER_GET_WIDGET  = Plugin::PREFIX . '_get_widget';
 
 	/* -------------------------------------------------------------------------
 	 * Public methods
@@ -24,10 +23,11 @@ class Utils
 	 * Filters out all entries with a null value.
 	 *
 	 * @param array $array The array to alter.
+	 *
 	 * @return array The filtered array.
 	 */
 	public function filter_null( $array ) {
-		return array_filter( $array, function ( $value ) {
+		return array_filter( $array, function( $value ) {
 			return isset( $value );
 		} );
 	}
@@ -44,8 +44,12 @@ class Utils
 	public function add_value( $array, $value, $pos = 'end', $unique = true, $strict = false ) {
 		if ( empty( $unique ) || is_bool( array_search( $value, $array, $strict ) ) ) {
 			switch ( $pos ) {
-				case 'begin': array_unshift( $array, $value ); break;
-				case 'end': array_push( $array, $value ); break;
+				case 'begin':
+					array_unshift( $array, $value );
+					break;
+				case 'end':
+					array_push( $array, $value );
+					break;
 			}
 		}
 		return $array;
@@ -69,6 +73,7 @@ class Utils
 	 * Transforms a css class string to an array.
 	 *
 	 * @param string $class A css class string
+	 *
 	 * @return array An array of css classes.
 	 */
 	public function parse_class( $class ) {
@@ -80,10 +85,11 @@ class Utils
 	 * Transforms an associative array of key/value pairs to html attributes.
 	 *
 	 * @param array $attr HTML attributes as key/value pairs.
+	 *
 	 * @return string Html attributes
 	 */
-	public function array_to_attr( $attr = array() ) {
-		$call = function ( $key, $value ) {
+	public function array_to_attr( $attr = [] ) {
+		$call = function( $key, $value ) {
 			if ( $value && is_bool( $value ) ) {
 				return sanitize_key( $key ) . '="' . esc_attr( $key ) . '"';
 			}
@@ -102,17 +108,19 @@ class Utils
 	 * @param string $class The instance class.
 	 * @param string $method The hooked class method.
 	 * @param int $priority The priority the hook was registred with.
+	 *
 	 * @return int The number of times the hook was removed.
 	 */
 	public function remove_hook( $tag, $class = '', $method = '', $priority = 10 ) {
 		global $wp_filter;
-		$hook  = $wp_filter[ $tag ]->callbacks[ $priority ] ?? array();
+		$hook  = $wp_filter[ $tag ]->callbacks[ $priority ] ?? [];
 		$func  = array_column( $hook, 'function' );
 		$count = 0;
 
 		foreach ( $func as $callback ) {
 			if ( is_array( $callback ) && count( $callback ) == 2 ) {
-				if ( empty( $class ) || ( is_object( $callback[0] ) ? get_class( $callback[0] ) : $callback[0] ) == $class ) {
+				if ( empty( $class ) || ( is_object( $callback[0] ) ? get_class( $callback[0] )
+						: $callback[0] ) == $class ) {
 					if ( empty( $method ) || $callback[1] == $method ) {
 						remove_filter( $tag, $callback, $priority );
 						$count++;
@@ -130,13 +138,14 @@ class Utils
 	 * @param string $class The instance class.
 	 * @param string $method The hooked class method.
 	 * @param int $priority The priority the hook was registred with.
+	 *
 	 * @return callback[] An array of class::mehtod() callbacks.
 	 */
 	public function get_hook_callback( $tag, $class = '', $method = '', $priority = 10 ) {
 		global $wp_filter;
-		$hook   = $wp_filter[ $tag ]->callbacks[ $priority ] ?? array();
+		$hook   = $wp_filter[ $tag ]->callbacks[ $priority ] ?? [];
 		$func   = array_column( $hook, 'function' );
-		$result = array();
+		$result = [];
 
 		foreach ( $func as $callback ) {
 			if ( is_array( $callback ) && count( $callback ) == 2 ) {
@@ -156,9 +165,10 @@ class Utils
 	 * @param string $widget The widget's PHP class name.
 	 * @param array $instance The widget's instance settings.
 	 * @param array $args Array of arguments to configure the display of the widget.
+	 *
 	 * @return string The widget's HTML output.
 	 */
-	public function get_the_widget( $widget, $instance = array(), $args = array() ) {
+	public function get_the_widget( $widget, $instance = [], $args = [] ) {
 		ob_start();
 		the_widget( $widget, $instance, $args );
 		return apply_filters( self::FILTER_GET_WIDGET, ob_get_clean(), $instance, $args );
@@ -169,6 +179,7 @@ class Utils
 	 *
 	 * @param string $key The meta key
 	 * @param string $status The post status to include in the result
+	 *
 	 * @return array An array of objects (post_id, meta_value)
 	 */
 	public function get_meta_table( $key, $status = 'publish' ) {
@@ -183,7 +194,7 @@ class Utils
 		$query[] = 'WHERE  pm.meta_key = %s AND p.post_status = %s';
 		$query[] = 'ORDER  BY pm.meta_value';
 
-		$sql = $wpdb->prepare( join( "\n", $query ), compact( 'key', 'status') );
+		$sql = $wpdb->prepare( join( "\n", $query ), compact( 'key', 'status' ) );
 		return $wpdb->get_results( $sql, OBJECT );
 	}
 }
