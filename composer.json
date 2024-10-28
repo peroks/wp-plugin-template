@@ -1,0 +1,8 @@
+{
+	"$schema": "https://getcomposer.org/schema.json",
+	"name": "peroks/wp-plugin-template",
+	"description": "[Your plugin description]",
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"version": "0.1.0"
+}
