@@ -22,7 +22,7 @@
 declare( strict_types = 1 );
 namespace Peroks\WP\Plugin\Name;
 
-require_once 'inc/trait-singleton.php';
+require_once __DIR__ . '/inc/trait-singleton.php';
 
 /**
  * The plugin main class.
@@ -97,6 +97,26 @@ class Plugin {
 	}
 
 	/**
+	 * Gets the current plugin version.
+	 */
+	public static function version(): string {
+		$version = wp_cache_get( 'version', self::PREFIX ) ?: '';
+
+		if ( empty( $version ) ) {
+			if ( empty( function_exists( 'get_plugin_data' ) ) ) {
+				if ( empty( is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) ) {
+					return '';
+				}
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			$data    = get_plugin_data( self::FILE, false, false );
+			$version = apply_filters( self::FILTER_PLUGIN_VERSION, $data['Version'], static::class );
+			wp_cache_set( 'version', $version, self::PREFIX );
+		}
+		return $version;
+	}
+
+	/**
 	 * Gets a full filesystem path from a local path.
 	 *
 	 * @param string $path The local path relative to this plugin's root directory.
@@ -120,26 +140,6 @@ class Plugin {
 		$path = ltrim( trim( $path ), '/' );
 		$url  = plugins_url( $path, self::FILE );
 		return apply_filters( self::FILTER_PLUGIN_URL, $url, $path );
-	}
-
-	/**
-	 * Gets the current plugin version.
-	 */
-	public static function version(): string {
-		$version = wp_cache_get( 'version', self::PREFIX ) ?: '';
-
-		if ( empty( $version ) ) {
-			if ( empty( function_exists( 'get_plugin_data' ) ) ) {
-				if ( empty( is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) ) {
-					return '';
-				}
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-			$data    = get_plugin_data( self::FILE, false, false );
-			$version = $data['Version'];
-			wp_cache_set( 'version', $version, self::PREFIX );
-		}
-		return apply_filters( self::FILTER_PLUGIN_VERSION, $version );
 	}
 }
 
