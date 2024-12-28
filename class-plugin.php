@@ -12,11 +12,11 @@
  * Plugin URI:        https://github.com/peroks/wp-plugin-template
  * Update URI:        false
  *
- * Version:           0.1.0
- * Stable tag:        0.1.0
+ * Version:           0.1.1
+ * Stable tag:        0.1.1
  * Requires at least: 6.6
- * Tested up to:      6.6
- * Requires PHP:      8.2
+ * Tested up to:      6.7
+ * Requires PHP:      8.1
  */
 
 declare( strict_types = 1 );
@@ -77,7 +77,7 @@ class Plugin {
 			__NAMESPACE__ . '\\Setup' => static::path( 'inc/class-setup.php' ),
 		] );
 
-		spl_autoload_register( function( $name ) use ( $classes ) {
+		spl_autoload_register( function ( $name ) use ( $classes ) {
 			if ( array_key_exists( $name, $classes ) ) {
 				require $classes[ $name ];
 			}
