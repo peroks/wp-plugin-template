@@ -2,21 +2,18 @@
 /**
  * Plugin Name:       [Your plugin name]
  * Description:       [Your plugin description].
- *
- * Text Domain:       [your-plugin-text-domain]
- * Domain Path:       /languages
- *
- * Author:            Per Egil Roksvaag
- * Author URI:        https://github.com/peroks
- *
  * Plugin URI:        https://github.com/peroks/wp-plugin-template
  * Update URI:        false
- *
- * Version:           0.1.1
- * Stable tag:        0.1.1
+ * Text Domain:       [your-plugin-text-domain]
+ * Domain Path:       /languages
+ * Author:            Per Egil Roksvaag
+ * Author URI:        https://github.com/peroks
+ * License:           MIT
+ * Version:           0.2.0
+ * Stable tag:        0.2.0
  * Requires at least: 6.6
- * Tested up to:      6.7
- * Requires PHP:      8.1
+ * Tested up to:      6.8
+ * Requires PHP:      8.2
  */
 
 declare( strict_types = 1 );
@@ -45,21 +42,6 @@ class Plugin {
 	const PREFIX = '[your_plugin_prefix]';
 
 	/**
-	 * The plugin global filter hooks.
-	 */
-	const FILTER_CLASS_NAME     = self::PREFIX . '/class_name';
-	const FILTER_CLASS_INSTANCE = self::PREFIX . '/class_instance';
-	const FILTER_CLASS_PATHS    = self::PREFIX . '/class_paths';
-	const FILTER_PLUGIN_VERSION = self::PREFIX . '/plugin_version';
-	const FILTER_PLUGIN_PATH    = self::PREFIX . '/plugin_path';
-	const FILTER_PLUGIN_URL     = self::PREFIX . '/plugin_url';
-
-	/**
-	 * The plugin global action hooks.
-	 */
-	const ACTION_CLASS_LOADED = self::PREFIX . '/class_loaded';
-
-	/**
 	 * Constructor.
 	 */
 	protected function __construct() {
@@ -71,11 +53,10 @@ class Plugin {
 	 * Registers autoloading.
 	 */
 	protected function autoload(): void {
-		$classes = apply_filters( self::FILTER_CLASS_PATHS, [
-			// Plugin setup.
+		$classes = [
 			__NAMESPACE__ . '\\Admin' => static::path( 'inc/class-admin.php' ),
 			__NAMESPACE__ . '\\Setup' => static::path( 'inc/class-setup.php' ),
-		] );
+		];
 
 		spl_autoload_register( function ( $name ) use ( $classes ) {
 			if ( array_key_exists( $name, $classes ) ) {
@@ -110,7 +91,7 @@ class Plugin {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 			$data    = get_plugin_data( self::FILE, false, false );
-			$version = apply_filters( self::FILTER_PLUGIN_VERSION, $data['Version'], static::class );
+			$version = $data['Version'];
 			wp_cache_set( 'version', $version, self::PREFIX );
 		}
 		return $version;
@@ -125,8 +106,7 @@ class Plugin {
 	 */
 	public static function path( string $path = '' ): string {
 		$path = ltrim( trim( $path ), '/' );
-		$full = plugin_dir_path( self::FILE ) . $path;
-		return apply_filters( self::FILTER_PLUGIN_PATH, $full, $path );
+		return plugin_dir_path( self::FILE ) . $path;
 	}
 
 	/**
@@ -138,8 +118,7 @@ class Plugin {
 	 */
 	public static function url( string $path = '' ): string {
 		$path = ltrim( trim( $path ), '/' );
-		$url  = plugins_url( $path, self::FILE );
-		return apply_filters( self::FILTER_PLUGIN_URL, $url, $path );
+		return plugins_url( $path, self::FILE );
 	}
 }
 

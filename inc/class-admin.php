@@ -1,8 +1,6 @@
 <?php
 /**
  * Plugin admin setup.
- *
- * @author Per Egil Roksvaag
  */
 
 declare( strict_types = 1 );

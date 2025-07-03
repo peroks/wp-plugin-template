@@ -1,8 +1,6 @@
 <?php
 /**
  * Implements the singleton pattern.
- *
- * @author Per Egil Roksvaag
  */
 
 declare( strict_types = 1 );
@@ -17,7 +15,7 @@ trait Singleton {
 	 *
 	 * @var static[]
 	 */
-	protected static array $inst;
+	private static array $instances = [];
 
 	/**
 	 * Gets a new or existing class instance.
@@ -25,13 +23,10 @@ trait Singleton {
 	 * @return static The class singleton.
 	 */
 	public static function instance(): static {
-		$class = apply_filters( Plugin::FILTER_CLASS_NAME, static::class );
-
-		if ( empty( static::$inst[ $class ] ) ) {
-			static::$inst[ $class ] = apply_filters( Plugin::FILTER_CLASS_INSTANCE, new $class(), static::class );
-			do_action( Plugin::ACTION_CLASS_LOADED, static::$inst[ $class ], $class, static::class );
+		if ( empty( static::$instances[ static::class ] ) ) {
+			static::$instances[ static::class ] = new static();
 		}
-		return static::$inst[ $class ];
+		return static::$instances[ static::class ];
 	}
 
 	/**

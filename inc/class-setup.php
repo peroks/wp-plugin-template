@@ -1,8 +1,6 @@
 <?php
 /**
  * Plugin setup.
- *
- * @author Per Egil Roksvaag
  */
 
 declare( strict_types = 1 );
@@ -18,12 +16,20 @@ class Setup {
 	 * Constructor.
 	 */
 	protected function __construct() {
+		// Load plugin translations.
 		add_action( 'init', [ $this, 'load_translations' ] );
 
-		if ( empty( is_admin() ) ) {
-			add_action( 'wp_enqueue_scripts', [ $this, 'wp_enqueue_styles' ] );
-			add_action( 'wp_enqueue_scripts', [ $this, 'wp_enqueue_scripts' ] );
-		}
+		// Enqueue frontend assets.
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
+
+		// Enqueue admin assets.
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
+
+		// Enqueue block assets for both editor and frontend.
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
+
+		// Enqueue block assets for the editor.
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor_assets' ] );
 	}
 
 	/**
@@ -35,12 +41,24 @@ class Setup {
 	}
 
 	/**
-	 * Enqueues frontend styles.
+	 * Enqueues frontend assets.
 	 */
-	public function wp_enqueue_styles() {}
+	public function enqueue_frontend_assets(): void {}
 
 	/**
-	 * Enqueues frontend scripts.
+	 * Enqueues admin assets.
+	 *
+	 * @param string $hook_suffix The current admin page.
 	 */
-	public function wp_enqueue_scripts() {}
+	public function enqueue_admin_assets( string $hook_suffix ): void {}
+
+	/**
+	 * Enqueues block assets for both editor and frontend.
+	 */
+	public function enqueue_block_assets(): void {}
+
+	/**
+	 * Enqueues block assets for the editor.
+	 */
+	public function enqueue_editor_assets(): void {}
 }
