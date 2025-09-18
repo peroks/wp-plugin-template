@@ -19,6 +19,7 @@
 declare( strict_types = 1 );
 namespace Peroks\WP\Plugin\Name;
 
+// Require the singleton trait.
 require_once __DIR__ . '/inc/trait-singleton.php';
 
 /**
@@ -85,7 +86,7 @@ class Plugin {
 
 		if ( empty( $version ) ) {
 			if ( empty( function_exists( 'get_plugin_data' ) ) ) {
-				if ( empty( is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) ) {
+				if ( empty( file_exists( ABSPATH . 'wp-admin/includes/plugin.php' ) ) ) {
 					return '';
 				}
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -122,7 +123,9 @@ class Plugin {
 	}
 }
 
-// Registers and runs the main plugin class.
+// Initialize the plugin and notify that it's fully loaded and ready.
 if ( defined( 'ABSPATH' ) && ABSPATH ) {
-	add_action( 'plugins_loaded', [ Plugin::class, 'instance' ] );
+	add_action( 'plugins_loaded', function () {
+		do_action( Plugin::PREFIX . '_loaded', Plugin::instance() );
+	}, 20 );
 }
