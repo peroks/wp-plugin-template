@@ -1,15 +1,15 @@
 <?php
 /**
- * Plugin admin setup.
+ * Plugin settings.
  */
 
 declare( strict_types = 1 );
 namespace Peroks\WP\Plugin\Name;
 
 /**
- * Plugin admin setup.
+ * Plugin settings.
  */
-class Admin {
+class Settings {
 	use Singleton;
 
 	/**

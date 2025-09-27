@@ -9,8 +9,8 @@
  * Author:            Per Egil Roksvaag
  * Author URI:        https://github.com/peroks
  * License:           MIT
- * Version:           0.2.0
- * Stable tag:        0.2.0
+ * Version:           0.2.2
+ * Stable tag:        0.2.2
  * Requires at least: 6.6
  * Tested up to:      6.8
  * Requires PHP:      8.2
@@ -55,8 +55,9 @@ class Plugin {
 	 */
 	protected function autoload(): void {
 		$classes = [
-			__NAMESPACE__ . '\\Admin' => static::path( 'inc/class-admin.php' ),
-			__NAMESPACE__ . '\\Setup' => static::path( 'inc/class-setup.php' ),
+			// Plugin setup.
+			__NAMESPACE__ . '\\Settings' => static::path( 'inc/class-settings.php' ),
+			__NAMESPACE__ . '\\Setup'    => static::path( 'inc/class-setup.php' ),
 		];
 
 		spl_autoload_register( function ( $name ) use ( $classes ) {
@@ -71,11 +72,8 @@ class Plugin {
 	 * You must register your classes for autoloading (above) before you can run them here.
 	 */
 	protected function run(): void {
+		Settings::instance();
 		Setup::instance();
-
-		if ( is_admin() ) {
-			Admin::instance();
-		}
 	}
 
 	/**
