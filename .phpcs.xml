@@ -2,7 +2,7 @@
 <ruleset>
 	<arg value="ps"/>
 	<arg name="colors"/>
-	<arg name="extensions" value="php" />
+	<arg name="extensions" value="php"/>
 
 	<config name="testVersion" value="8.2-"/>
 	<config name="text_domain" value="[your-plugin-text-domain]"/>
@@ -13,10 +13,11 @@
 	<exclude-pattern>vendor</exclude-pattern>
 
 	<rule ref="WordPress">
-		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
-		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments"/>
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
 		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
 	</rule>
 
@@ -27,4 +28,5 @@
 	</rule>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.NoSpaceAfterFunction"/>
 </ruleset>
