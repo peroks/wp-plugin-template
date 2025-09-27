@@ -9,8 +9,8 @@
  * Author:            Per Egil Roksvaag
  * Author URI:        https://github.com/peroks
  * License:           MIT
- * Version:           0.2.2
- * Stable tag:        0.2.2
+ * Version:           0.3
+ * Stable tag:        0.3
  * Requires at least: 6.6
  * Tested up to:      6.8
  * Requires PHP:      8.2
